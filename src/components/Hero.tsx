@@ -1,129 +1,179 @@
 "use client";
-import React from "react";
-import Link from "next/link";
+import React, { useState, useEffect } from "react";
+import Image from "next/image";
+import GetStarted from "./GetStarted";
 
-// Luxury-inspired editorial hero with full viewport coverage
-// Keeps the background video at /public/videos/hero.mp4
+const slides = [
+  {
+    id: 1,
+    image: "/images/hero/1.png",
+    tagline: "Luxury Looks, Styled Free",
+  },
+  {
+    id: 2,
+    image: "/images/hero/2.png",
+    tagline: "No Rules. No Fees. Just Fashion",
+  },
+  {
+    id: 3,
+    image: "/images/hero/3.png",
+    tagline: "Free Styling, Full Swagger",
+  },
+  {
+    id: 4,
+    image: "/images/hero/4.png",
+    tagline: "Designer Looks, Zero Cost",
+  },
+  {
+    id: 5,
+    image: "/images/hero/5.png",
+    tagline: "Style That Doesn't Cost a Thing",
+  },
+  {
+    id: 6,
+    image: "/images/hero/6.png",
+    tagline: "Fashion Finds, On the House",
+  },
+];
 
 const Hero: React.FC = () => {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      handleNext();
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [currentSlide]);
+
+  const handleNext = () => {
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+      setIsTransitioning(false);
+    }, 50);
+  };
+
+  const goToSlide = (index: number) => {
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setCurrentSlide(index);
+      setIsTransitioning(false);
+    }, 50);
+  };
+
   return (
     <section
       id="hero"
-      className="relative isolate flex h-screen min-h-[100vh] items-center overflow-hidden"
-      aria-label="Editorial hero"
+      className="relative isolate flex h-screen min-h-screen items-end overflow-hidden bg-gradient-to-br from-zinc-50 via-white to-stone-50"
+      aria-label="Hero carousel"
     >
-      {/* Background video */}
-      <video
-        className="pointer-events-none absolute inset-0 -z-20 h-full w-full object-cover"
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="auto"
-      >
-        <source src="/videos/hero.mp4" type="video/mp4" />
-      </video>
-
-      {/* Legibility overlays */}
-      <div className="absolute inset-0 -z-10 bg-black/35" />
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-1/2 bg-gradient-to-b from-transparent to-black/70" />
-
-      {/* Top utility bar */}
-      <div className="pointer-events-none absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-6 py-4 text-xs text-white/80 md:px-10">
-        <span className="pointer-events-auto uppercase tracking-[0.35em]">AW &apos;25</span>
-        <span className="hidden pointer-events-auto md:block">Free shipping over ₹1,999 • Easy 30‑day returns</span>
+      {/* Background images with smooth transitions */}
+      <div className="absolute inset-0 -z-10">
+        {slides.map((slide, index) => (
+          <div
+            key={slide.id}
+            className={`absolute inset-0 transition-opacity duration-1000 ${
+              index === currentSlide ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            <Image
+              src={slide.image}
+              alt=""
+              fill
+              priority={index === 0}
+              quality={100}
+              className="object-cover object-center"
+            />
+            {/* Strong gradient overlay for text visibility */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent" />
+          </div>
+        ))}
       </div>
 
-      {/* Content */}
-      <div className="relative z-10 mx-auto flex h-full w-full max-w-7xl flex-col justify-center px-6 md:px-10">
-        <div className="max-w-3xl">
-          {/* Microcopy */}
-          <p className="mb-3 text-[11px] uppercase tracking-[0.35em] text-white/80">
-            The New Edit
-          </p>
-
-          {/* Editorial headline */}
-          <h1 className="text-5xl font-extrabold leading-[1.05] text-white md:text-8xl">
-            Redefine Quiet Power
-          </h1>
-
-          {/* Subline */}
-          <p className="mt-4 max-w-2xl text-base leading-relaxed text-white/90 md:text-lg">
-            Tailored silhouettes in weightless wool. Midnight satin with architectural lines. Essentials, distilled.
-          </p>
-
-          {/* Primary actions */}
-          <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-            <Link
-              href="/women"
-              className="group inline-flex items-center text-white/95 underline underline-offset-[6px] decoration-white/30 hover:decoration-white"
+      {/* Fixed bottom-center content container with consistent positioning */}
+      <div className="relative z-10 w-full pb-32 px-6 text-center md:pb-40 lg:pb-44">
+        <div className="mx-auto max-w-6xl">
+          {/* Fixed height container for tagline to prevent dancing */}
+          <div className="mb-10 flex h-32 items-center justify-center md:h-40 lg:h-48">
+            <h1
+              className={`text-4xl font-light tracking-tight text-white transition-opacity duration-700 drop-shadow-2xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl ${
+                isTransitioning ? "opacity-0" : "opacity-100"
+              }`}
+              style={{
+                fontFamily: "system-ui, -apple-system, sans-serif",
+                letterSpacing: "-0.02em",
+                textShadow: "0 4px 24px rgba(0, 0, 0, 0.6)",
+              }}
             >
-              Shop Women
-              <svg
-                className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-0.5"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true"
-              >
-                <path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </Link>
-            <Link
-              href="/men"
-              className="group inline-flex items-center text-white/95 underline underline-offset-[6px] decoration-white/30 hover:decoration-white"
+              {slides[currentSlide].tagline}
+            </h1>
+          </div>
+
+          {/* Elegant divider with fixed position */}
+          <div
+            className={`mx-auto mb-10 h-px w-24 bg-white/80 transition-opacity duration-700 ${
+              isTransitioning ? "opacity-0" : "opacity-100"
+            }`}
+          />
+
+          {/* CTA Button with fixed position */}
+          <div className="flex justify-center">
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className={`group relative inline-block overflow-hidden bg-white px-12 py-4 text-sm font-semibold uppercase tracking-widest text-zinc-900 shadow-2xl transition-all duration-700 hover:bg-zinc-50 hover:shadow-white/20 md:px-16 md:py-5 md:text-base ${
+                isTransitioning ? "opacity-0" : "opacity-100"
+              }`}
             >
-              Shop Men
-              <svg
-                className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-0.5"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true"
-              >
-                <path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </Link>
-            <Link
-              href="/capsule/aw25"
-              className="group inline-flex items-center text-white/80 underline underline-offset-[6px] decoration-white/20 hover:text-white hover:decoration-white"
-            >
-              AW &apos;25 Capsule
-              <svg
-                className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-0.5"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true"
-              >
-                <path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </Link>
+              <span className="relative z-10">Get Started</span>
+              <div className="absolute inset-0 -z-0 bg-gradient-to-r from-transparent via-zinc-200 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
+            </button>
           </div>
         </div>
       </div>
 
-      {/* Right rail nav */}
-      <nav className="absolute right-0 top-0 z-20 hidden h-full w-20 items-center justify-center md:flex">
-        <ul className="flex flex-col items-center gap-6 text-[10px] uppercase tracking-[0.3em] text-white/60">
-          <li><a href="#women" className="hover:text-white">Women</a></li>
-          <li><a href="#men" className="hover:text-white">Men</a></li>
-          <li><a href="#shoes" className="hover:text-white">Shoes</a></li>
-          <li><a href="#bags" className="hover:text-white">Bags</a></li>
-        </ul>
-      </nav>
+      {/* Navigation dots with fixed position */}
+      <div className="absolute bottom-12 left-1/2 z-20 flex -translate-x-1/2 gap-3 md:bottom-16">
+        {slides.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => goToSlide(index)}
+            className={`h-2 rounded-full transition-all duration-500 ${
+              index === currentSlide
+                ? "w-12 bg-white shadow-lg shadow-white/30"
+                : "w-2 bg-white/50 hover:bg-white/80"
+            }`}
+            aria-label={`Go to slide ${index + 1}`}
+          />
+        ))}
+      </div>
 
-      {/* Bottom nav strip */}
-      <div className="absolute inset-x-0 bottom-0 z-20 border-t border-white/10 bg-black/30 backdrop-blur-sm">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 text-[12px] uppercase tracking-[0.25em] text-white/80 md:px-10">
-          <Link href="/new" className="hover:text-white">New In</Link>
-          <Link href="/tailoring" className="hover:text-white">Tailoring</Link>
-          <Link href="/evening" className="hover:text-white">Evening</Link>
-          <Link href="/denim" className="hover:text-white">Denim</Link>
-          <Link href="/accessories" className="hover:text-white">Accessories</Link>
-          <Link href="/sale" className="hover:text-white">Sale</Link>
+      {/* Slide counter */}
+      <div className="absolute right-6 top-6 z-20 text-sm font-light tracking-wider text-white md:right-12 md:top-12">
+        <span className="text-2xl font-extralight drop-shadow-lg">
+          {String(currentSlide + 1).padStart(2, "0")}
+        </span>
+        <span className="mx-2 text-white/60">/</span>
+        <span className="text-white/80">
+          {String(slides.length).padStart(2, "0")}
+        </span>
+      </div>
+
+      {/* Premium brand mark */}
+      <div className="absolute left-6 top-6 z-20 md:left-12 md:top-12">
+        <div className="text-2xl font-extralight tracking-tight text-white drop-shadow-lg">
+          STUDIO
+        </div>
+        <div className="mt-1 text-[10px] font-light uppercase tracking-[0.3em] text-white/80">
+          Contemporary
         </div>
       </div>
+
+      {/* Get Started Modal */}
+      <GetStarted isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </section>
   );
 };
